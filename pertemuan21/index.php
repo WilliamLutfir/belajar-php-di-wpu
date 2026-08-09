@@ -1,0 +1,132 @@
+<?php
+	session_start();
+	if(!isset($_SESSION["login"])){header("Location: login.php");}
+	// Ada sedikit perbedaan antara require & include
+	require 'fungsis.php';
+	// pagination
+	// konfigurasi
+	$jmlhDataPerHlmn=10;
+	if( (!isset($_GET["katakunci"])) && (!isset($_GET["order"])) ){
+		$jmlhSeluruhDataMhs=count(kueri("SELECT * FROM mahasiswa"));
+		// jumlah halaman = total data / data per halaman
+		$jmlhHlmn=ceil($jmlhSeluruhDataMhs/$jmlhDataPerHlmn);
+		$hlmnAktif=isset($_GET["hal"]) ? $_GET["hal"] : 1;
+		$awalData=($jmlhDataPerHlmn*$hlmnAktif)-$jmlhDataPerHlmn;
+		                                             // data mulai dari index ke-brp
+		$mahasiswa=kueri("SELECT * FROM mahasiswa LIMIT $awalData,$jmlhDataPerHlmn");
+	                                                           // mau berapa data yg ditampilkan
+		echo "<div id=\"pagination\">";
+		if($hlmnAktif>1){echo "<a href=\"?hal=".($hlmnAktif-1)."\"><button>&laquo;</button></a> ";}
+		for($i=1;$i<=$jmlhHlmn;$i+=1){
+			if($i==$hlmnAktif){echo "<a href=\"?hal=".$i."\"><button style=\"font-weight: bold; color: red;\">".$i."</button></a> ";}
+			else{echo "<a href=\"?hal=".$i."\"><button>".$i."</button></a> ";}}
+		if($hlmnAktif<$jmlhHlmn){echo "<a href=\"?hal=".($hlmnAktif+1)."\"><button>&raquo;</button></a>";}
+		echo "</div>";}
+
+	// Jika tombol cari diklik
+	if(isset($_GET["katakunci"])){
+		$jmlhSeluruhDataMhs=count(kueri(cari($_GET["katakunci"])));
+		$jmlhHlmn=ceil($jmlhSeluruhDataMhs/$jmlhDataPerHlmn);
+		$hlmnAktif=isset($_GET["hal"]) ? $_GET["hal"] : 1;
+		$awalData=($jmlhDataPerHlmn*$hlmnAktif)-$jmlhDataPerHlmn;
+		$mahasiswa=kueri(cari($_GET["katakunci"])." LIMIT $awalData,$jmlhDataPerHlmn");
+		echo "<div id=\"pagination\">";
+		if($hlmnAktif>1){echo "<a href=\"?katakunci=".$_GET["katakunci"]."&hal=".($hlmnAktif-1)."\"><button>&laquo;</button></a> ";}
+		for($i=1;$i<=$jmlhHlmn;$i+=1){
+			if($i==$hlmnAktif){echo "<a href=\"?katakunci=".$_GET["katakunci"]."&hal=".$i."\"><button style=\"font-weight: bold; color: red;\">".$i."</button></a> ";}
+			else{echo "<a href=\"?katakunci=".$_GET["katakunci"]."&hal=".$i."\"><button>".$i."</button></a> ";}}
+		if($hlmnAktif<$jmlhHlmn){echo "<a href=\"?katakunci=".$_GET["katakunci"]."&hal=".($hlmnAktif+1)."\"><button>&raquo;</button></a>";}
+		echo "</div>";}
+
+	// Jika tombol ascending diklik
+	if(isset($_GET["order"]) && ($_GET["order"]==="asc")){
+		$jmlhSeluruhDataMhs=count(kueri("SELECT * FROM mahasiswa ORDER BY nama ASC"));
+		$jmlhHlmn=ceil($jmlhSeluruhDataMhs/$jmlhDataPerHlmn);
+		$hlmnAktif=isset($_GET["hal"]) ? $_GET["hal"] : 1;
+		$awalData=($jmlhDataPerHlmn*$hlmnAktif)-$jmlhDataPerHlmn;
+		$mahasiswa=kueri("SELECT * FROM mahasiswa ORDER BY nama ASC LIMIT $awalData,$jmlhDataPerHlmn");
+		echo "<div id=\"pagination\">";
+		if($hlmnAktif>1){echo "<a href=\"?order=".$_GET["order"]."&hal=".($hlmnAktif-1)."\"><button>&laquo;</button></a> ";}
+		for($i=1;$i<=$jmlhHlmn;$i+=1){
+			if($i==$hlmnAktif){echo "<a href=\"?order=".$_GET["order"]."&hal=".$i."\"><button style=\"font-weight: bold; color: red;\">".$i."</button></a> ";}
+			else{echo "<a href=\"?order=".$_GET["order"]."&hal=".$i."\"><button>".$i."</button></a> ";}}
+		if($hlmnAktif<$jmlhHlmn){echo "<a href=\"?order=".$_GET["order"]."&hal=".($hlmnAktif+1)."\"><button>&raquo;</button></a>";}
+		echo "</div>";}
+
+	// Jika tombol descending diklik
+	if(isset($_GET["order"]) && ($_GET["order"]==="desc")){
+		$jmlhSeluruhDataMhs=count(kueri("SELECT * FROM mahasiswa ORDER BY nama DESC"));
+		$jmlhHlmn=ceil($jmlhSeluruhDataMhs/$jmlhDataPerHlmn);
+		$hlmnAktif=isset($_GET["hal"]) ? $_GET["hal"] : 1;
+		$awalData=($jmlhDataPerHlmn*$hlmnAktif)-$jmlhDataPerHlmn;
+		$mahasiswa=kueri("SELECT * FROM mahasiswa ORDER BY nama DESC LIMIT $awalData,$jmlhDataPerHlmn");
+		echo "<div id=\"pagination\">";
+		if($hlmnAktif>1){echo "<a href=\"?order=".$_GET["order"]."&hal=".($hlmnAktif-1)."\"><button>&laquo;</button></a> ";}
+		for($i=1;$i<=$jmlhHlmn;$i+=1){
+			if($i==$hlmnAktif){echo "<a href=\"?order=".$_GET["order"]."&hal=".$i."\"><button style=\"font-weight: bold; color: red;\">".$i."</button></a> ";}
+			else{echo "<a href=\"?order=".$_GET["order"]."&hal=".$i."\"><button>".$i."</button></a> ";}}
+		if($hlmnAktif<$jmlhHlmn){echo "<a href=\"?order=".$_GET["order"]."&hal=".($hlmnAktif+1)."\"><button>&raquo;</button></a>";}
+		echo "</div>";}
+?>
+<!DOCTYPE html>
+<html lang="id">
+	<head>
+		<title>Halaman Admin</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+		<style>
+			body{margin: 8px;}
+			th{text-align: center;}
+			.keluar{display: block; text-align: right;}
+			ul{display: inline-block; list-style-type: none;}
+			@media print{
+				br,ul,button,form[method=GET],.keluar,.tambah,.materi,.aksi,.pengguna,.asc,.desc,#katakunci,#pagination{display: none;}
+			}
+		</style>
+		<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous" defer></script>
+		<script src="js/skrip.js" defer></script>
+	</head>
+	<body>
+		<table style="width: 100%;">
+			<tr>
+				<td class="pengguna">Pengguna Sedang Login : <?= ucwords($_SESSION["login"]); ?></td>
+				<td><a href="keluar.php" class="keluar" onclick="return confirm('Apakah <?= ucwords($_SESSION["login"]); ?> yakin ingin keluar dari akun?')">Keluar</a></td>
+			</tr>
+		</table>
+		<h1>Daftar Mahasiswa</h1>
+		<a href="tambah.php" class="tambah">Tambah Data Mahasiswa</a> <ul><li><a href="materi.php" class="materi">Materi</a></li></ul>
+		<form action="" method="GET">
+			<input type="text" name="katakunci" size="40" autocomplete="off" placeholder="Masukkan kata kunci pencarian..." id="katakunci" autofocus> <button type="submit" id="cari">Cari</button><div class="spinner-border" role="status" style="scale: 0.8; margin-bottom: -7px; display: none;"><span class="visually-hidden">Loading...</span></div>
+		</form>
+		<button onclick="window.print()">Cetak Halaman Ini</button><a href="cetak.php" target="_blank"><button style="margin-left: 10px">Cetak Semua Data Mahasiswa</button></a><br><br>
+		<div id="wadah"><table border="1" cellspacing="0" cellpadding="5" class="table-bordered border-black">
+			<tr>
+				<th>No.</th><th class="aksi">Aksi</th><th>Gambar</th>
+				<th>Nama <a href="?order=asc" class="asc"><button>↑</button></a> <a href="?order=desc" class="desc"><button>↓</button></a></th>
+				<th>Nim</th><th>Surel</th>
+				<th>Jurusan</th>
+			</tr>
+			<?php $no=1; ?>
+			<?php foreach($mahasiswa as $mhs) : ?>
+				<tr>
+					<td>
+						<?php if($hlmnAktif==1) : ?>
+							<?php echo $no; ?>.
+						<?php else : ?>
+							<?php echo $no==10 ? $hlmnAktif."0" : ($hlmnAktif-1).$no; ?>.
+						<?php endif ?>
+					</td>
+					<td class="aksi">
+						<a href="ubah.php?id=<?php echo $mhs["id"]; ?>"><button>ubah</button></a> |
+						<form action="hapus.php" method="POST" style="display: inline-block;"><!-- <input type="hidden" name="id" value="<?php //echo $mhs["id"]; ?>"> --><button type="submit" name="tekan" value="<?php echo $mhs["id"];?>" onclick="return confirm('Apakah anda yakin ingin hapus mahasiswa bernama <?=$mhs["nama"];?>?')">hapus</button></form>
+					</td>
+					<td><img src="gmbr/<?php echo $mhs["gambar"]; ?>" alt="<?php echo $mhs["gambar"]; ?>" title="<?php echo $mhs["nama"]; ?>" width="60px"></td>
+					<td><?php echo $mhs["nama"]; ?></td>
+					<td><?php echo $mhs["nim"]; ?></td>
+					<td><?php echo $mhs["surel"]; ?></td>
+					<td><?php echo $mhs["jurusan"]; ?></td>
+				</tr>
+				<?php $no+=1; ?>
+			<?php endforeach; ?>
+		</table><br></div>
+	</body>
+</html>

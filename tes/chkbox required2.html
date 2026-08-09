@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Contoh Checkbox Required (POST)</title>
+</head>
+<body>
+  <h1>Contoh Checkbox Required (POST)</h1>
+  
+  <form action="proses.php" method="post" onsubmit="return validasiFormulir()">
+    <label>
+      <input type="checkbox" name="option1">
+      Opsi 1
+    </label>
+    <br>
+    <label>
+      <input type="checkbox" name="option2">
+      Opsi 2
+    </label>
+    <br>
+    <label>
+      <input type="checkbox" name="option3">
+      Opsi 3
+    </label>
+    <br>
+    <input type="submit" value="Submit">
+  </form>
+
+  <script>
+    function validasiFormulir() {
+      var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      var checked = Array.from(checkboxes).some(function(checkbox) {
+        return checkbox.checked;
+      });
+
+      if (!checked) {
+        alert('Setidaknya satu opsi harus dipilih!');
+        return false; // Mencegah pengiriman formulir jika tidak ada checkbox yang tercentang
+      }
+
+      return true; // Mengizinkan pengiriman formulir jika setidaknya satu checkbox tercentang
+    }
+  </script>
+</body>
+</html>

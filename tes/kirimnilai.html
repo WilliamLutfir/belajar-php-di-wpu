@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    var nilai = "Nilai yang ingin Anda kirim ke PHP";
+var xhr = new XMLHttpRequest();
+xhr.open("POST", "kirimnilai.php", true);
+xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+xhr.onreadystatechange = function() {
+  if (xhr.readyState === 4 && xhr.status === 200) {
+    console.log(xhr.responseText); // Tanggapan dari PHP
+  }
+};
+xhr.send("nilai=" + nilai);
+  </script>
+  
+</body>
+</html>
+
